@@ -2,8 +2,16 @@
 name = "fs-sim"
 version = "0.1.0"
 edition = "2021"
+authors = ["Patryk Strużek <patrykstruzek17@gmail.com>"]
+license = "MIT"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "fs-sim"
+path = "src/main.rs"
+
+[lib]
+name = "fs_lib"
+path = "src/fs/lib.rs"
 
 [dependencies]
 chrono = "0.4"
