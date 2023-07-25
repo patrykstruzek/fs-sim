@@ -1,3 +1,6 @@
+use fs_lib::file;
+
 fn main() {
-    println!("Hello World");    
+    let _new_file = file::File::new(String::from("file"), String::from("txt"), 1);
+    println!("Hello World");
 }
