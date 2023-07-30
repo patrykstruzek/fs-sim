@@ -13,5 +13,9 @@ path = "src/main.rs"
 name = "fs_lib"
 path = "src/fs/lib.rs"
 
+[[test]]
+name = "fs_test"
+path = "src/tests/test.rs"
+
 [dependencies]
 chrono = "0.4"
