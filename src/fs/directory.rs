@@ -2,7 +2,7 @@ use chrono::{offset::Local, DateTime};
 
 use crate::file::File;
 
-struct Directory {
+pub struct Directory {
     id: i16,
     name: String,
     size: i64,
@@ -11,12 +11,12 @@ struct Directory {
 }
 
 impl Directory {
-    fn new(name: &str, files: Vec<File>) -> Self {
+    pub fn new(name: &str) -> Self {
         Directory {
             id: Directory::get_next_id(),
             name: name.to_string(),
-            size: Directory::sum_size(&files),
-            files,
+            size: 0,
+            files: vec![],
             creation_date: Some(Local::now()),
         }
     }
@@ -29,8 +29,16 @@ impl Directory {
         }
     }
 
-    fn sum_size(files: &Vec<File>) -> i64 {
+    fn sum_size(files: &[File]) -> i64 {
         files.iter().map(|file| file.size).sum()
+    }
+
+    pub fn store(&mut self, file: File) {
+        self.files.push(file);
+    }
+
+    pub fn files(&self) -> &Vec<File> {
+        &self.files
     }
     
 }
