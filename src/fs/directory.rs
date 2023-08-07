@@ -1,3 +1,5 @@
+use std::{cell::{RefCell, Ref}, rc::{Weak, Rc}};
+
 use chrono::{offset::Local, DateTime};
 
 use crate::file::File;
@@ -6,7 +8,9 @@ pub struct Directory {
     id: i16,
     name: String,
     size: i64,
-    files: Vec<File>,
+    parent_dir: RefCell<Weak<Directory>>,
+    children_dir: RefCell<Vec<Rc<Directory>>>,
+    files: RefCell<Vec<Rc<File>>>,
     creation_date: Option<DateTime<Local>>,
 }
 
@@ -16,7 +20,9 @@ impl Directory {
             id: Directory::get_next_id(),
             name: name.to_string(),
             size: 0,
-            files: vec![],
+            parent_dir: RefCell::new(Weak::new()),
+            children_dir: RefCell::new(vec![]),
+            files: RefCell::new(vec![]),
             creation_date: Some(Local::now()),
         }
     }
@@ -29,15 +35,15 @@ impl Directory {
         }
     }
 
-    fn sum_size(files: &[File]) -> i64 {
-        files.iter().map(|file| file.size).sum()
+    fn sum_size(&self) -> i64 {
+        self.files.borrow_mut().iter().map(|file| file.size).sum()
     }
 
     pub fn store(&mut self, file: File) {
-        self.files.push(file);
+        self.files.borrow_mut().push(Rc::new(file));
     }
 
-    pub fn files(&self) -> &Vec<File> {
+    pub fn files(&self) -> &RefCell<Vec<Rc<File>>> {
         &self.files
     }
     

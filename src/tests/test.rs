@@ -10,6 +10,6 @@ mod tests {
 
         new_dir.store(new_file.clone());
 
-        assert_eq!(new_dir.files().get(0).unwrap(), &new_file);
+        assert_eq!(new_dir.files().borrow_mut().get(0).unwrap().as_ref(), &new_file);
     }
 }
