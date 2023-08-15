@@ -19,3 +19,5 @@ path = "src/tests/test.rs"
 
 [dependencies]
 chrono = "0.4"
+regex = "1.9.3"
+crypto-hash = "0.3.4"
