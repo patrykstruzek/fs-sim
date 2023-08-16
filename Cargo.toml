@@ -21,3 +21,5 @@ path = "src/tests/test.rs"
 chrono = "0.4"
 regex = "1.9.3"
 crypto-hash = "0.3.4"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }

@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use fs_lib::directory::*;
-    use fs_lib::file::*;
+    use fs_lib::dir::*;
+    use fs_lib::fl::*;
 
     #[test]
     fn dir_should_store_file() {
@@ -10,6 +10,6 @@ mod tests {
 
         new_dir.store(new_file.clone());
 
-        assert_eq!(new_dir.files().borrow_mut().get(0).unwrap().as_ref(), &new_file);
+        assert_eq!(new_dir.files().borrow().get(0), new_file);
     }
 }
