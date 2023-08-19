@@ -1,24 +1,26 @@
 use crate::fs::FilSys;
-use crate::new_json_db;
+use crate::db::Db;
 use crate::usr::User;
-use std::fs::File;
-
-struct Session {
+pub struct Session {
     filsys: FilSys,
-    user: User,
-    db: File
+    curr_user: User,
+    db: Db,
 }
 
 impl Session {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Session {
             filsys: FilSys::new(),
-            user: User::new(),
-            db: new_json_db("db").unwrap()
+            curr_user: User::new(),
+            db: Db::new("db").unwrap(),
         }
     }
 
-    fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn run(mut self) -> Result<(), Box<dyn std::error::Error>> {
+            println!("Register:");
+            let new_usr = User::new();
+            self.db.insert(&new_usr).unwrap();
+            self.curr_user = new_usr;
         Ok(())
     }
 }
