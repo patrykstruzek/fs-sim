@@ -1,6 +1,5 @@
 use crypto_hash::{Algorithm, hex_digest};
-use regex::Regex;
-use std::io;
+use std::io::{self, Write};
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -31,9 +30,7 @@ struct Login {
 
 impl Login {
     fn new() -> Self {
-        println!("name: ");
         let name = Name::input();
-        println!("password: ");
         let password = Password::input();
         Login {
             name,
@@ -56,13 +53,16 @@ struct Name(String);
 impl Input for Name {
     fn input() -> Self {
         loop {
+            super::print("name: ");
+            std::io::stdout().flush().unwrap();
             let mut name = String::new();
             match io::stdin().read_line(&mut name) {
                 Ok(_) => {
                     let trimmed_name = name.trim();
-                    if trimmed_name.len() >= 1 && trimmed_name.len() <= 12 {
+                    if Self::is_valid(&trimmed_name) {
                         return Name(trimmed_name.to_string());
                     } else {
+                        super::clr_curr_ln();
                         println!("Name must have between 1 and 12 characters.");
                     }
                 }
@@ -74,20 +74,31 @@ impl Input for Name {
     }
 }
 
+impl Name {
+    fn is_valid(name: &str) -> bool {
+        name.len() >= 1 && name.len() <= 12
+    }
+}
+
 struct Password(String);
 impl Input for Password {
     fn input() -> Self {
         loop {
+            super::print("password: ");
             let mut passwd = String::new();
             match io::stdin().read_line(&mut passwd) {
                 Ok(_) => {
-                    let password_regex = Regex::new(r"^(?=.*\d)(?=.*[A-Z])(?=.*\W).{8,}$").unwrap();
-                    if password_regex.is_match(&passwd) {
-                        let hashed_password = hex_digest(Algorithm::SHA256, passwd.as_bytes());
-                        return Password(hashed_password);
+                    if Self::is_valid(&passwd) {
+                        let hashed_passwd
+                        = hex_digest(Algorithm::SHA256, passwd.as_bytes());
+                        return Password(hashed_passwd);
                     } else {
-                        println!("Invalid password. It must have at least 8 characters,
-                         one digit, one uppercase letter, and one special character.");
+                        super::clr_curr_ln();
+                        println!("Invalid password. It must have at least:\n\
+                        8 characters,\n\
+                        one digit,\n\
+                        one uppercase letter,\n\
+                        and one special character.");
                     }
                 }
                 Err(e) => {
@@ -95,5 +106,17 @@ impl Input for Password {
                 }
             }
         }
+    }
+}
+
+impl Password {
+    pub fn is_valid(password: &str) -> bool {
+        let length_condition = password.len() >= 8;
+        let uppercase_condition = password.chars().any(|c| c.is_ascii_uppercase());
+        let lowercase_condition = password.chars().any(|c| c.is_ascii_lowercase());
+        let digit_condition = password.chars().any(|c| c.is_ascii_digit());
+        let special_character_condition = regex::Regex::new(r"[@#$%^&+=!*_]").unwrap().is_match(password);
+    
+        length_condition && uppercase_condition && lowercase_condition && digit_condition && special_character_condition
     }
 }
