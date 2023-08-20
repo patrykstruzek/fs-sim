@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {
     id: u16,
-    name: Name
+    pub name: Name
 }
 
 impl User {
@@ -39,17 +39,16 @@ impl Login {
     }
 
     fn change<T: Input>(name: &str) {
-
+        T::input();
     }
 }
 
-trait Input {
+pub trait Input {
     fn input() -> Self;
 }
 
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct Name(String);
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Name(String);
 impl Input for Name {
     fn input() -> Self {
         loop {

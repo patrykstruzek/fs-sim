@@ -1,10 +1,10 @@
-use crate::fs::FilSys;
 use crate::db::Db;
-use crate::usr::User;
+use crate::fs::FilSys;
+use crate::usr::{User, Name, Input};
+
 pub struct Session {
     filsys: FilSys,
     curr_user: User,
-    db: Db,
 }
 
 impl Session {
@@ -12,15 +12,17 @@ impl Session {
         Session {
             filsys: FilSys::new(),
             curr_user: User::new(),
-            db: Db::new("db").unwrap(),
         }
     }
 
     pub fn run(mut self) -> Result<(), Box<dyn std::error::Error>> {
-            println!("Register:");
-            let new_usr = User::new();
-            self.db.insert(&new_usr).unwrap();
-            self.curr_user = new_usr;
+        println!("Register:");
+        let new_usr = User::new();
+        let mut db = Db::new("db").unwrap();
+        db.insert(&new_usr).unwrap();
+        self.curr_user = new_usr;
+        self.curr_user.name = Name::input();
+        db.update("1", &self.curr_user).unwrap();
         Ok(())
     }
 }
